@@ -60,7 +60,7 @@ export default function Home() {
 
           <div className="hero-note">
             <span className="status-dot" />
-            A new social universe is coming.
+            Available for the adventure ahead...
           </div>
         </div>
 
