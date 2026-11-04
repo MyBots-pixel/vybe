@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "VYBE — Your people. Your world.",
+  title: "VYBE",
   description:
     "Connect, discover communities and share your world with VYBE."
 };
