@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
+import { updateProfile } from "../actions/profile";
 import { signOut } from "../actions/auth";
 
-export default async function ProfilePage() {
+export default async function ProfilePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; success?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -19,6 +25,19 @@ export default async function ProfilePage() {
     .select("*")
     .eq("id", user.id)
     .single();
+
+  const inputStyle = {
+    width: "100%",
+    padding: "15px",
+    marginTop: "9px",
+    borderRadius: "10px",
+    border: "1px solid #39304F",
+    background: "#090A14",
+    color: "#FFFFFF",
+    outline: "none",
+    boxSizing: "border-box" as const,
+    fontSize: "15px",
+  };
 
   return (
     <main style={{
@@ -69,42 +88,90 @@ export default async function ProfilePage() {
           YOUR VYBE IDENTITY
         </p>
 
-        <h1 style={{
-          fontSize: "36px",
-          marginTop: "12px"
-        }}>
-          Your profile
+        <h1 style={{ fontSize: "36px", marginTop: "12px" }}>
+          Edit your profile
         </h1>
 
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "20px",
-          marginTop: "35px"
-        }}>
-          <div style={{
-            width: "85px",
-            height: "85px",
-            borderRadius: "50%",
-            background: "linear-gradient(135deg, #8B5CF6, #22D3EE)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "32px",
-            fontWeight: 900
+        {params.error && (
+          <p style={{
+            background: "#451D2B",
+            color: "#FF9BAF",
+            padding: "13px",
+            borderRadius: "9px"
           }}>
-            {(profile?.display_name || user.email || "V").charAt(0).toUpperCase()}
-          </div>
+            {params.error}
+          </p>
+        )}
 
-          <div>
-            <h2 style={{ fontSize: "23px", margin: 0 }}>
-              {profile?.display_name || "Your display name"}
-            </h2>
-            <p style={{ color: "#9996B5", marginTop: "7px" }}>
-              {profile?.username ? `@${profile.username}` : "Choose your username"}
-            </p>
-          </div>
-        </div>
+        {params.success && (
+          <p style={{
+            background: "#12352D",
+            color: "#75E6B7",
+            padding: "13px",
+            borderRadius: "9px"
+          }}>
+            {params.success}
+          </p>
+        )}
+
+        <form action={updateProfile} style={{ marginTop: "30px" }}>
+          <label style={{ color: "#BDB9D3" }}>
+            Username
+            <input
+              name="username"
+              defaultValue={profile?.username || ""}
+              placeholder="e.g. vybeuser"
+              minLength={3}
+              maxLength={20}
+              required
+              pattern="[a-zA-Z0-9_]+"
+              style={inputStyle}
+            />
+          </label>
+
+          <p style={{ color: "#77778E", fontSize: "12px" }}>
+            3–20 characters. Letters, numbers and underscores only.
+          </p>
+
+          <label style={{ display: "block", marginTop: "25px", color: "#BDB9D3" }}>
+            Display name
+            <input
+              name="display_name"
+              defaultValue={profile?.display_name || ""}
+              placeholder="Your name"
+              maxLength={40}
+              required
+              style={inputStyle}
+            />
+          </label>
+
+          <label style={{ display: "block", marginTop: "25px", color: "#BDB9D3" }}>
+            Bio
+            <textarea
+              name="bio"
+              defaultValue={profile?.bio || ""}
+              placeholder="Tell the VYBE community about yourself..."
+              maxLength={160}
+              rows={4}
+              style={{ ...inputStyle, resize: "vertical" }}
+            />
+          </label>
+
+          <button type="submit" style={{
+            width: "100%",
+            marginTop: "30px",
+            padding: "16px",
+            border: "none",
+            borderRadius: "10px",
+            background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
+            color: "#FFFFFF",
+            fontWeight: 800,
+            fontSize: "15px",
+            cursor: "pointer"
+          }}>
+            SAVE PROFILE
+          </button>
+        </form>
 
         <div style={{
           marginTop: "35px",
@@ -117,26 +184,6 @@ export default async function ProfilePage() {
           </p>
           <p>{user.email}</p>
         </div>
-
-        <div style={{
-          marginTop: "20px",
-          padding: "20px",
-          background: "#090A14",
-          borderRadius: "12px"
-        }}>
-          <p style={{ color: "#9996B5", fontSize: "12px" }}>
-            ABOUT YOU
-          </p>
-          <p>{profile?.bio || "You haven't added a bio yet."}</p>
-        </div>
-
-        <p style={{
-          color: "#77778E",
-          fontSize: "13px",
-          marginTop: "30px"
-        }}>
-          Your profile is connected to your VYBE account.
-        </p>
       </section>
 
       <form action={signOut} style={{ textAlign: "center" }}>
