@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
+import type React from "react";
 import { updateProfileImages } from "../actions/profile";
 
 type CropImage = {
@@ -77,11 +78,14 @@ function createCroppedImage(
           resolve(new File([blob], filename, { type: "image/jpeg" }));
         },
         "image/jpeg",
-        0.90
+        0.9
       );
     };
 
-    img.onerror = () => reject(new Error("Could not load this image."));
+    img.onerror = () => reject(
+      new Error("Could not load the selected image. Please choose it again.")
+    );
+
     img.src = image.url;
   });
 }
@@ -92,12 +96,13 @@ export default function ImageEditor() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
+  const imageUrls = useRef<string[]>([]);
+
   useEffect(() => {
     return () => {
-      if (avatar) URL.revokeObjectURL(avatar.url);
-      if (banner) URL.revokeObjectURL(banner.url);
+      imageUrls.current.forEach((url) => URL.revokeObjectURL(url));
     };
-  }, [avatar, banner]);
+  }, []);
 
   function selectImage(
     event: React.ChangeEvent<HTMLInputElement>,
@@ -119,9 +124,12 @@ export default function ImageEditor() {
 
     setError("");
 
+    const url = URL.createObjectURL(file);
+    imageUrls.current.push(url);
+
     const selected: CropImage = {
       file,
-      url: URL.createObjectURL(file),
+      url,
       zoom: 1,
       x: 0,
       y: 0,
@@ -181,6 +189,7 @@ export default function ImageEditor() {
           ? err.message
           : "Something went wrong while editing your images."
       );
+
       setSaving(false);
     }
   }
@@ -255,6 +264,7 @@ export default function ImageEditor() {
               <span style={{ color: "#22D3EE", fontWeight: 700 }}>
                 Zoom: {image.zoom.toFixed(1)}x
               </span>
+
               <input
                 type="range"
                 min="1"
@@ -277,6 +287,7 @@ export default function ImageEditor() {
               <span style={{ color: "#22D3EE", fontWeight: 700 }}>
                 Move horizontally
               </span>
+
               <input
                 type="range"
                 min="-100"
@@ -298,6 +309,7 @@ export default function ImageEditor() {
               <span style={{ color: "#22D3EE", fontWeight: 700 }}>
                 Move vertically
               </span>
+
               <input
                 type="range"
                 min="-100"
@@ -335,6 +347,7 @@ export default function ImageEditor() {
         <div style={{ marginTop: "20px" }}>
           <label style={buttonStyle}>
             {image ? "Choose another image" : "Choose image"}
+
             <input
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
