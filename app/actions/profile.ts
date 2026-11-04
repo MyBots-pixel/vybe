@@ -10,14 +10,9 @@ export async function updateProfile(formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
 
-  const username = String(formData.get("username") || "")
-    .trim()
-    .toLowerCase();
-
+  const username = String(formData.get("username") || "").trim().toLowerCase();
   const displayName = String(formData.get("display_name") || "").trim();
   const bio = String(formData.get("bio") || "").trim();
 
@@ -35,13 +30,13 @@ export async function updateProfile(formData: FormData) {
 
   const { error } = await supabase
     .from("profiles")
-    .upsert({
-      id: user.id,
+    .update({
       username,
       display_name: displayName,
       bio,
       updated_at: new Date().toISOString(),
-    });
+    })
+    .eq("id", user.id);
 
   if (error) {
     if (error.code === "23505") {
@@ -52,4 +47,87 @@ export async function updateProfile(formData: FormData) {
   }
 
   redirect("/profile?success=Profile%20updated%20successfully");
+}
+
+export async function updateProfileImages(formData: FormData) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+  ];
+
+  const uploads = [
+    {
+      field: "avatar",
+      bucket: "avatars",
+      column: "avatar_url",
+      maxSize: 5 * 1024 * 1024,
+    },
+    {
+      field: "banner",
+      bucket: "banners",
+      column: "banner_url",
+      maxSize: 8 * 1024 * 1024,
+    },
+  ] as const;
+
+  for (const item of uploads) {
+    const file = formData.get(item.field);
+
+    if (!(file instanceof File) || file.size === 0) {
+      continue;
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+      redirect("/profile?error=Please%20use%20a%20JPG%2C%20PNG%2C%20WebP%20or%20GIF%20image");
+    }
+
+    if (file.size > item.maxSize) {
+      redirect(`/profile?error=${item.field === "avatar" ? "Profile%20picture" : "Banner"}%20file%20is%20too%20large`);
+    }
+
+    const extension = file.type === "image/jpeg"
+      ? "jpg"
+      : file.type.split("/")[1];
+
+    const path = `${user.id}/${Date.now()}-${item.field}.${extension}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(item.bucket)
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      redirect(`/profile?error=${encodeURIComponent(uploadError.message)}`);
+    }
+
+    const { data: publicUrl } = supabase.storage
+      .from(item.bucket)
+      .getPublicUrl(path);
+
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({
+        [item.column]: publicUrl.publicUrl,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", user.id);
+
+    if (updateError) {
+      redirect(`/profile?error=${encodeURIComponent(updateError.message)}`);
+    }
+  }
+
+  redirect("/profile?success=Your%20images%20have%20been%20updated");
 }
