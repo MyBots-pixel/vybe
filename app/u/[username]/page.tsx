@@ -16,9 +16,7 @@ export default async function PublicProfilePage({
     .eq("username", username.toLowerCase())
     .single();
 
-  if (!profile) {
-    notFound();
-  }
+  if (!profile) notFound();
 
   const initial = (profile.display_name || profile.username || "V")
     .charAt(0)
@@ -70,8 +68,10 @@ export default async function PublicProfilePage({
         overflow: "hidden"
       }}>
         <div style={{
-          height: "170px",
-          background: "linear-gradient(120deg, #5424A8, #151629 65%, #087F91)"
+          height: "200px",
+          background: profile.banner_url
+            ? `url("${profile.banner_url}") center/cover`
+            : "linear-gradient(120deg, #5424A8, #151629 65%, #087F91)"
         }} />
 
         <div style={{ padding: "0 35px 40px" }}>
@@ -81,14 +81,16 @@ export default async function PublicProfilePage({
             marginTop: "-55px",
             borderRadius: "50%",
             border: "5px solid #151629",
-            background: "linear-gradient(135deg, #8B5CF6, #22D3EE)",
+            background: profile.avatar_url
+              ? `url("${profile.avatar_url}") center/cover`
+              : "linear-gradient(135deg, #8B5CF6, #22D3EE)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             fontSize: "42px",
             fontWeight: 900
           }}>
-            {initial}
+            {!profile.avatar_url && initial}
           </div>
 
           <h1 style={{
