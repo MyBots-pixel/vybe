@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
-import { updateProfile, updateProfileImages } from "../actions/profile";
+import ImageEditor from "./image-editor";
+import { updateProfile } from "../actions/profile";
 import { signOut } from "../actions/auth";
 
 export default async function ProfilePage({
@@ -37,70 +38,88 @@ export default async function ProfilePage({
   };
 
   return (
-    <main style={{
-      minHeight: "100vh",
-      background: "#090A14",
-      color: "#F4F4FF",
-      padding: "35px 7%",
-      fontFamily: "Arial, sans-serif"
-    }}>
-      <nav style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        borderBottom: "1px solid #25243B",
-        paddingBottom: "25px"
-      }}>
-        <Link href="/" style={{
-          color: "#FFFFFF",
-          fontSize: "30px",
-          fontWeight: 900,
-          textDecoration: "none"
-        }}>
+    <main
+      style={{
+        minHeight: "100vh",
+        background: "#090A14",
+        color: "#F4F4FF",
+        padding: "35px 7%",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+      <nav
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid #25243B",
+          paddingBottom: "25px",
+        }}
+      >
+        <Link
+          href="/"
+          style={{
+            color: "#FFFFFF",
+            fontSize: "30px",
+            fontWeight: 900,
+            textDecoration: "none",
+          }}
+        >
           VYBE<span style={{ color: "#22D3EE" }}>.</span>
         </Link>
 
-        <Link href="/dashboard" style={{
-          color: "#B99BFF",
-          textDecoration: "none"
-        }}>
+        <Link
+          href="/dashboard"
+          style={{
+            color: "#B99BFF",
+            textDecoration: "none",
+          }}
+        >
           Dashboard →
         </Link>
       </nav>
 
-      <section style={{
-        maxWidth: "750px",
-        margin: "55px auto",
-        background: "#151629",
-        border: "1px solid #302B4C",
-        borderRadius: "22px",
-        overflow: "hidden"
-      }}>
-        <div style={{
-          height: "150px",
-          background: profile?.banner_url
-            ? `url("${profile.banner_url}") center/cover`
-            : "linear-gradient(120deg, #5424A8, #151629 65%, #087F91)"
-        }} />
+      <section
+        style={{
+          maxWidth: "750px",
+          margin: "55px auto",
+          background: "#151629",
+          border: "1px solid #302B4C",
+          borderRadius: "22px",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            height: "150px",
+            background: profile?.banner_url
+              ? `url("${profile.banner_url}") center/cover`
+              : "linear-gradient(120deg, #5424A8, #151629 65%, #087F91)",
+          }}
+        />
 
         <div style={{ padding: "0 30px 35px" }}>
-          <div style={{
-            width: "100px",
-            height: "100px",
-            marginTop: "-50px",
-            borderRadius: "50%",
-            border: "5px solid #151629",
-            background: profile?.avatar_url
-              ? `url("${profile.avatar_url}") center/cover`
-              : "linear-gradient(135deg, #8B5CF6, #22D3EE)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: "36px",
-            fontWeight: 900
-          }}>
+          <div
+            style={{
+              width: "100px",
+              height: "100px",
+              marginTop: "-50px",
+              borderRadius: "50%",
+              border: "5px solid #151629",
+              background: profile?.avatar_url
+                ? `url("${profile.avatar_url}") center/cover`
+                : "linear-gradient(135deg, #8B5CF6, #22D3EE)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "36px",
+              fontWeight: 900,
+            }}
+          >
             {!profile?.avatar_url &&
-              (profile?.display_name || user.email || "V").charAt(0).toUpperCase()}
+              (profile?.display_name || user.email || "V")
+                .charAt(0)
+                .toUpperCase()}
           </div>
 
           <h1 style={{ fontSize: "32px", marginBottom: "5px" }}>
@@ -108,7 +127,9 @@ export default async function ProfilePage({
           </h1>
 
           <p style={{ color: "#22D3EE" }}>
-            {profile?.username ? `@${profile.username}` : "Choose your username"}
+            {profile?.username
+              ? `@${profile.username}`
+              : "Choose your username"}
           </p>
 
           <p style={{ color: "#BDB9D3" }}>
@@ -117,91 +138,60 @@ export default async function ProfilePage({
         </div>
       </section>
 
-      <section style={{
-        maxWidth: "750px",
-        margin: "0 auto 35px",
-        background: "#151629",
-        border: "1px solid #302B4C",
-        borderRadius: "18px",
-        padding: "30px"
-      }}>
-        <h2 style={{ fontSize: "23px" }}>Profile pictures & banner</h2>
+      <section
+        style={{
+          maxWidth: "750px",
+          margin: "0 auto 35px",
+          background: "#151629",
+          border: "1px solid #302B4C",
+          borderRadius: "18px",
+          padding: "30px",
+        }}
+      >
+        <h2 style={{ fontSize: "23px" }}>VYBE Image Studio</h2>
 
         <p style={{ color: "#9996B5", fontSize: "13px" }}>
-          Personalise your VYBE identity.
+          Edit, crop and position your profile pictures and banners before
+          uploading them.
         </p>
 
-        <form action={updateProfileImages} encType="multipart/form-data">
-          <label style={{ display: "block", marginTop: "25px" }}>
-            Profile picture
-            <input
-              type="file"
-              name="avatar"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              style={{ display: "block", marginTop: "12px" }}
-            />
-            <span style={{ color: "#77778E", fontSize: "12px" }}>
-              Maximum 5 MB.
-            </span>
-          </label>
-
-          <label style={{ display: "block", marginTop: "25px" }}>
-            Profile banner
-            <input
-              type="file"
-              name="banner"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              style={{ display: "block", marginTop: "12px" }}
-            />
-            <span style={{ color: "#77778E", fontSize: "12px" }}>
-              Maximum 8 MB.
-            </span>
-          </label>
-
-          <button type="submit" style={{
-            width: "100%",
-            marginTop: "25px",
-            padding: "15px",
-            border: "none",
-            borderRadius: "10px",
-            background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
-            color: "#FFFFFF",
-            fontWeight: 800,
-            cursor: "pointer"
-          }}>
-            UPLOAD IMAGES
-          </button>
-        </form>
+        <ImageEditor />
       </section>
 
-      <section style={{
-        maxWidth: "750px",
-        margin: "0 auto",
-        background: "#151629",
-        border: "1px solid #302B4C",
-        borderRadius: "18px",
-        padding: "30px"
-      }}>
+      <section
+        style={{
+          maxWidth: "750px",
+          margin: "0 auto",
+          background: "#151629",
+          border: "1px solid #302B4C",
+          borderRadius: "18px",
+          padding: "30px",
+        }}
+      >
         <h2 style={{ fontSize: "23px" }}>Edit your details</h2>
 
         {params.error && (
-          <p style={{
-            background: "#451D2B",
-            color: "#FF9BAF",
-            padding: "13px",
-            borderRadius: "9px"
-          }}>
+          <p
+            style={{
+              background: "#451D2B",
+              color: "#FF9BAF",
+              padding: "13px",
+              borderRadius: "9px",
+            }}
+          >
             {params.error}
           </p>
         )}
 
         {params.success && (
-          <p style={{
-            background: "#12352D",
-            color: "#75E6B7",
-            padding: "13px",
-            borderRadius: "9px"
-          }}>
+          <p
+            style={{
+              background: "#12352D",
+              color: "#75E6B7",
+              padding: "13px",
+              borderRadius: "9px",
+            }}
+          >
             {params.success}
           </p>
         )}
@@ -245,27 +235,32 @@ export default async function ProfilePage({
             />
           </label>
 
-          <button type="submit" style={{
-            width: "100%",
-            marginTop: "25px",
-            padding: "15px",
-            border: "none",
-            borderRadius: "10px",
-            background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
-            color: "#FFFFFF",
-            fontWeight: 800,
-            cursor: "pointer"
-          }}>
+          <button
+            type="submit"
+            style={{
+              width: "100%",
+              marginTop: "25px",
+              padding: "15px",
+              border: "none",
+              borderRadius: "10px",
+              background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
+              color: "#FFFFFF",
+              fontWeight: 800,
+              cursor: "pointer",
+            }}
+          >
             SAVE PROFILE
           </button>
         </form>
 
-        <div style={{
-          marginTop: "25px",
-          padding: "18px",
-          background: "#090A14",
-          borderRadius: "10px"
-        }}>
+        <div
+          style={{
+            marginTop: "25px",
+            padding: "18px",
+            background: "#090A14",
+            borderRadius: "10px",
+          }}
+        >
           <p style={{ color: "#9996B5", fontSize: "12px" }}>
             ACCOUNT EMAIL
           </p>
@@ -273,15 +268,21 @@ export default async function ProfilePage({
         </div>
       </section>
 
-      <form action={signOut} style={{ textAlign: "center", marginTop: "30px" }}>
-        <button type="submit" style={{
-          background: "#151629",
-          border: "1px solid #39304F",
-          borderRadius: "10px",
-          color: "#FFFFFF",
-          padding: "13px 22px",
-          cursor: "pointer"
-        }}>
+      <form
+        action={signOut}
+        style={{ textAlign: "center", marginTop: "30px" }}
+      >
+        <button
+          type="submit"
+          style={{
+            background: "#151629",
+            border: "1px solid #39304F",
+            borderRadius: "10px",
+            color: "#FFFFFF",
+            padding: "13px 22px",
+            cursor: "pointer",
+          }}
+        >
           Log out
         </button>
       </form>
