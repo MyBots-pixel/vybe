@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
-import { updateProfile } from "../actions/profile";
+import { updateProfile, updateProfileImages } from "../actions/profile";
 import { signOut } from "../actions/auth";
 
 export default async function ProfilePage({
@@ -16,9 +16,7 @@ export default async function ProfilePage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
+  if (!user) redirect("/login");
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -34,7 +32,6 @@ export default async function ProfilePage({
     border: "1px solid #39304F",
     background: "#090A14",
     color: "#FFFFFF",
-    outline: "none",
     boxSizing: "border-box" as const,
     fontSize: "15px",
   };
@@ -73,24 +70,119 @@ export default async function ProfilePage({
 
       <section style={{
         maxWidth: "750px",
-        margin: "65px auto",
+        margin: "55px auto",
         background: "#151629",
         border: "1px solid #302B4C",
         borderRadius: "22px",
-        padding: "35px"
+        overflow: "hidden"
       }}>
-        <p style={{
-          color: "#22D3EE",
-          fontSize: "12px",
-          fontWeight: 800,
-          letterSpacing: "3px"
-        }}>
-          YOUR VYBE IDENTITY
+        <div style={{
+          height: "150px",
+          background: profile?.banner_url
+            ? `url("${profile.banner_url}") center/cover`
+            : "linear-gradient(120deg, #5424A8, #151629 65%, #087F91)"
+        }} />
+
+        <div style={{ padding: "0 30px 35px" }}>
+          <div style={{
+            width: "100px",
+            height: "100px",
+            marginTop: "-50px",
+            borderRadius: "50%",
+            border: "5px solid #151629",
+            background: profile?.avatar_url
+              ? `url("${profile.avatar_url}") center/cover`
+              : "linear-gradient(135deg, #8B5CF6, #22D3EE)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "36px",
+            fontWeight: 900
+          }}>
+            {!profile?.avatar_url &&
+              (profile?.display_name || user.email || "V").charAt(0).toUpperCase()}
+          </div>
+
+          <h1 style={{ fontSize: "32px", marginBottom: "5px" }}>
+            {profile?.display_name || "Your profile"}
+          </h1>
+
+          <p style={{ color: "#22D3EE" }}>
+            {profile?.username ? `@${profile.username}` : "Choose your username"}
+          </p>
+
+          <p style={{ color: "#BDB9D3" }}>
+            {profile?.bio || "You haven't added a bio yet."}
+          </p>
+        </div>
+      </section>
+
+      <section style={{
+        maxWidth: "750px",
+        margin: "0 auto 35px",
+        background: "#151629",
+        border: "1px solid #302B4C",
+        borderRadius: "18px",
+        padding: "30px"
+      }}>
+        <h2 style={{ fontSize: "23px" }}>Profile pictures & banner</h2>
+
+        <p style={{ color: "#9996B5", fontSize: "13px" }}>
+          Personalise your VYBE identity.
         </p>
 
-        <h1 style={{ fontSize: "36px", marginTop: "12px" }}>
-          Edit your profile
-        </h1>
+        <form action={updateProfileImages} encType="multipart/form-data">
+          <label style={{ display: "block", marginTop: "25px" }}>
+            Profile picture
+            <input
+              type="file"
+              name="avatar"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              style={{ display: "block", marginTop: "12px" }}
+            />
+            <span style={{ color: "#77778E", fontSize: "12px" }}>
+              Maximum 5 MB.
+            </span>
+          </label>
+
+          <label style={{ display: "block", marginTop: "25px" }}>
+            Profile banner
+            <input
+              type="file"
+              name="banner"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              style={{ display: "block", marginTop: "12px" }}
+            />
+            <span style={{ color: "#77778E", fontSize: "12px" }}>
+              Maximum 8 MB.
+            </span>
+          </label>
+
+          <button type="submit" style={{
+            width: "100%",
+            marginTop: "25px",
+            padding: "15px",
+            border: "none",
+            borderRadius: "10px",
+            background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
+            color: "#FFFFFF",
+            fontWeight: 800,
+            cursor: "pointer"
+          }}>
+            UPLOAD IMAGES
+          </button>
+        </form>
+      </section>
+
+      <section style={{
+        maxWidth: "750px",
+        margin: "0 auto",
+        background: "#151629",
+        border: "1px solid #302B4C",
+        borderRadius: "18px",
+        padding: "30px"
+      }}>
+        <h2 style={{ fontSize: "23px" }}>Edit your details</h2>
 
         {params.error && (
           <p style={{
@@ -114,26 +206,22 @@ export default async function ProfilePage({
           </p>
         )}
 
-        <form action={updateProfile} style={{ marginTop: "30px" }}>
-          <label style={{ color: "#BDB9D3" }}>
+        <form action={updateProfile} style={{ marginTop: "25px" }}>
+          <label>
             Username
             <input
               name="username"
               defaultValue={profile?.username || ""}
-              placeholder="e.g. vybeuser"
+              placeholder="Your username"
               minLength={3}
               maxLength={20}
-              required
               pattern="[a-zA-Z0-9_]+"
+              required
               style={inputStyle}
             />
           </label>
 
-          <p style={{ color: "#77778E", fontSize: "12px" }}>
-            3–20 characters. Letters, numbers and underscores only.
-          </p>
-
-          <label style={{ display: "block", marginTop: "25px", color: "#BDB9D3" }}>
+          <label style={{ display: "block", marginTop: "22px" }}>
             Display name
             <input
               name="display_name"
@@ -145,12 +233,12 @@ export default async function ProfilePage({
             />
           </label>
 
-          <label style={{ display: "block", marginTop: "25px", color: "#BDB9D3" }}>
+          <label style={{ display: "block", marginTop: "22px" }}>
             Bio
             <textarea
               name="bio"
               defaultValue={profile?.bio || ""}
-              placeholder="Tell the VYBE community about yourself..."
+              placeholder="Tell everyone about yourself..."
               maxLength={160}
               rows={4}
               style={{ ...inputStyle, resize: "vertical" }}
@@ -159,14 +247,13 @@ export default async function ProfilePage({
 
           <button type="submit" style={{
             width: "100%",
-            marginTop: "30px",
-            padding: "16px",
+            marginTop: "25px",
+            padding: "15px",
             border: "none",
             borderRadius: "10px",
             background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
             color: "#FFFFFF",
             fontWeight: 800,
-            fontSize: "15px",
             cursor: "pointer"
           }}>
             SAVE PROFILE
@@ -174,19 +261,19 @@ export default async function ProfilePage({
         </form>
 
         <div style={{
-          marginTop: "35px",
-          padding: "20px",
+          marginTop: "25px",
+          padding: "18px",
           background: "#090A14",
-          borderRadius: "12px"
+          borderRadius: "10px"
         }}>
           <p style={{ color: "#9996B5", fontSize: "12px" }}>
             ACCOUNT EMAIL
           </p>
-          <p>{user.email}</p>
+          {user.email}
         </div>
       </section>
 
-      <form action={signOut} style={{ textAlign: "center" }}>
+      <form action={signOut} style={{ textAlign: "center", marginTop: "30px" }}>
         <button type="submit" style={{
           background: "#151629",
           border: "1px solid #39304F",
