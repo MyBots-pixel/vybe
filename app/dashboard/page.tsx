@@ -90,42 +90,90 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#090A14",
-        color: "#F4F4FF",
-        padding: "30px 5%",
-        fontFamily: "Arial, sans-serif",
-      }}
-    >
+    <main className="vybe-dashboard">
       <style>{`
-        .vybe-dashboard-grid {
-          display: grid;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 18px;
+        .vybe-dashboard {
+          min-height: 100vh;
+          background: var(--background);
+          color: var(--text);
+          padding: 30px 5%;
+          font-family: inherit;
+          transition: background 180ms ease, color 180ms ease;
+        }
+
+        .vybe-dashboard-header {
+          max-width: 1150px;
+          margin: 0 auto;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 15px;
+          padding-bottom: 22px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .vybe-dashboard-logo {
+          color: var(--text);
+          font-size: 30px;
+          font-weight: 900;
+          text-decoration: none;
         }
 
         .vybe-dashboard-card {
           display: block;
           padding: 24px;
           min-height: 185px;
-          border: 1px solid #302B4C;
+          border: 1px solid var(--border);
           border-radius: 17px;
-          background: #151629;
-          color: #F4F4FF;
+          background: var(--card-background);
+          color: var(--text);
           text-decoration: none;
           transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
         }
 
         .vybe-dashboard-card:hover {
           transform: translateY(-4px);
-          border-color: #8B5CF6;
-          background: #1B1A34;
+          border-color: var(--purple);
         }
 
         .vybe-dashboard-disabled {
-          opacity: 0.5;
+          opacity: 0.55;
+        }
+
+        .vybe-dashboard-grid {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 18px;
+        }
+
+        .vybe-dashboard-muted {
+          color: var(--muted);
+        }
+
+        .vybe-dashboard-account {
+          margin-top: 30px;
+          padding: 22px;
+          border-radius: 16px;
+          border: 1px solid var(--border);
+          background: var(--card-background);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 15px;
+        }
+
+        .vybe-dashboard-settings {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 11px 15px;
+          border: 1px solid var(--border);
+          border-radius: 9px;
+          color: var(--purple);
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: 700;
         }
 
         @media (max-width: 800px) {
@@ -135,34 +183,23 @@ export default async function DashboardPage() {
         }
 
         @media (max-width: 520px) {
+          .vybe-dashboard {
+            padding: 22px 5%;
+          }
+
           .vybe-dashboard-grid {
             grid-template-columns: 1fr;
+          }
+
+          .vybe-dashboard-hero {
+            padding: 28px !important;
           }
         }
       `}</style>
 
-      <header
-        style={{
-          maxWidth: "1150px",
-          margin: "0 auto",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: "15px",
-          paddingBottom: "22px",
-          borderBottom: "1px solid #25243B",
-        }}
-      >
-        <Link
-          href="/"
-          style={{
-            color: "#FFFFFF",
-            fontSize: "30px",
-            fontWeight: 900,
-            textDecoration: "none",
-          }}
-        >
-          VYBE<span style={{ color: "#22D3EE" }}>.</span>
+      <header className="vybe-dashboard-header">
+        <Link href="/" className="vybe-dashboard-logo">
+          VYBE<span style={{ color: "var(--cyan)" }}>.</span>
         </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -175,8 +212,8 @@ export default async function DashboardPage() {
               borderRadius: "50%",
               background: profile?.avatar_url
                 ? `url("${profile.avatar_url}") center/cover`
-                : "linear-gradient(135deg, #8B5CF6, #22D3EE)",
-              border: "2px solid #8B5CF6",
+                : "linear-gradient(135deg, var(--purple), var(--cyan))",
+              border: "2px solid var(--purple)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -196,10 +233,10 @@ export default async function DashboardPage() {
                 alignItems: "center",
                 gap: "7px",
                 padding: "10px 14px",
-                border: "1px solid #493044",
+                border: "1px solid #d45b78",
                 borderRadius: "9px",
-                background: "#151629",
-                color: "#FF9BAF",
+                background: "var(--card-background)",
+                color: "#d45b78",
                 cursor: "pointer",
               }}
             >
@@ -212,6 +249,7 @@ export default async function DashboardPage() {
 
       <div style={{ maxWidth: "1150px", margin: "40px auto" }}>
         <section
+          className="vybe-dashboard-hero"
           style={{
             position: "relative",
             overflow: "hidden",
@@ -221,6 +259,7 @@ export default async function DashboardPage() {
             background:
               "linear-gradient(115deg, #21183D, #171B35 60%, #102A3B)",
             marginBottom: "40px",
+            color: "#FFFFFF",
           }}
         >
           <div
@@ -243,6 +282,7 @@ export default async function DashboardPage() {
               fontSize: "clamp(30px, 5vw, 45px)",
               margin: "20px 0 12px",
               letterSpacing: "-1px",
+              color: "#FFFFFF",
             }}
           >
             Welcome back, {displayName}.
@@ -250,7 +290,7 @@ export default async function DashboardPage() {
 
           <p
             style={{
-              color: "#C0B9D8",
+              color: "#E0D9F0",
               fontSize: "15px",
               lineHeight: 1.7,
               maxWidth: "550px",
@@ -283,7 +323,7 @@ export default async function DashboardPage() {
         <section>
           <p
             style={{
-              color: "#22D3EE",
+              color: "var(--purple)",
               fontSize: "10px",
               fontWeight: 800,
               letterSpacing: "2px",
@@ -296,7 +336,10 @@ export default async function DashboardPage() {
             Where do you want to go?
           </h2>
 
-          <p style={{ color: "#9996B5", fontSize: "13px", marginBottom: "22px" }}>
+          <p
+            className="vybe-dashboard-muted"
+            style={{ fontSize: "13px", marginBottom: "22px" }}
+          >
             Everything you need, just one click away.
           </p>
 
@@ -328,6 +371,7 @@ export default async function DashboardPage() {
                       fontSize: "9px",
                       fontWeight: 800,
                       letterSpacing: "1.3px",
+                      marginBottom: "8px",
                     }}
                   >
                     {card.status}
@@ -339,6 +383,7 @@ export default async function DashboardPage() {
                       justifyContent: "space-between",
                       alignItems: "center",
                       gap: "10px",
+                      marginBottom: "8px",
                     }}
                   >
                     <strong style={{ fontSize: "17px" }}>
@@ -346,13 +391,13 @@ export default async function DashboardPage() {
                     </strong>
 
                     {card.href && (
-                      <ArrowUpRight size={17} color="#77778E" />
+                      <ArrowUpRight size={17} color="var(--muted)" />
                     )}
                   </div>
 
                   <p
+                    className="vybe-dashboard-muted"
                     style={{
-                      color: "#9996B5",
                       fontSize: "12px",
                       lineHeight: 1.6,
                       marginBottom: 0,
@@ -384,27 +429,15 @@ export default async function DashboardPage() {
           </div>
         </section>
 
-        <section
-          style={{
-            marginTop: "30px",
-            padding: "22px",
-            borderRadius: "16px",
-            border: "1px solid #302B4C",
-            background: "#151629",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "15px",
-          }}
-        >
+        <section className="vybe-dashboard-account">
           <div>
             <p
               style={{
-                color: "#22D3EE",
+                color: "var(--purple)",
                 fontSize: "10px",
                 fontWeight: 800,
                 letterSpacing: "1.5px",
+                marginBottom: "7px",
               }}
             >
               YOUR ACCOUNT
@@ -412,35 +445,21 @@ export default async function DashboardPage() {
 
             <strong>{displayName}</strong>
 
-            <p style={{ color: "#9996B5", fontSize: "12px" }}>
+            <p className="vybe-dashboard-muted" style={{ fontSize: "12px" }}>
               {user.email}
             </p>
           </div>
 
-          <Link
-            href="/settings"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              padding: "11px 15px",
-              border: "1px solid #49376B",
-              borderRadius: "9px",
-              color: "#C5A8FF",
-              textDecoration: "none",
-              fontSize: "12px",
-              fontWeight: 700,
-            }}
-          >
+          <Link href="/settings" className="vybe-dashboard-settings">
             <Settings size={15} />
             Account settings
           </Link>
         </section>
 
         <footer
+          className="vybe-dashboard-muted"
           style={{
             textAlign: "center",
-            color: "#65627B",
             fontSize: "10px",
             letterSpacing: "1.5px",
             marginTop: "35px",
