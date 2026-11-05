@@ -75,7 +75,7 @@ export default function AppSidebar() {
 
       <div className="sidebar-bottom">
         <div className="sidebar-promo">
-          <Sparkles size={21} color="#22D3EE" />
+          <Sparkles size={21} />
           <strong>Your people.</strong>
           <span>Your world.</span>
           <small>WELCOME TO VYBE</small>
@@ -85,6 +85,18 @@ export default function AppSidebar() {
 
       <style jsx>{`
         .vybe-sidebar {
+          --sidebar-bg: #10101f;
+          --sidebar-text: #d5d2e8;
+          --sidebar-muted: #aaa7c2;
+          --sidebar-heading: #aaa7c2;
+          --sidebar-border: #302d49;
+          --sidebar-hover: #211e35;
+          --sidebar-hover-text: #ffffff;
+          --sidebar-active-bg: linear-gradient(100deg, #38265f, #202d49);
+          --sidebar-active-text: #ffffff;
+          --sidebar-promo-bg: linear-gradient(145deg, #211a3b, #111c2b);
+          --sidebar-promo-border: #393052;
+
           width: 245px;
           min-width: 245px;
           min-height: 100vh;
@@ -92,17 +104,19 @@ export default function AppSidebar() {
           position: sticky;
           top: 0;
           align-self: flex-start;
-          background: #10101f;
-          border-right: 1px solid #28253e;
+          background: var(--sidebar-bg);
+          border-right: 1px solid var(--sidebar-border);
           padding: 30px 17px;
           box-sizing: border-box;
           display: flex;
           flex-direction: column;
           font-family: Arial, sans-serif;
+          color: var(--sidebar-text);
+          transition: background 180ms ease, color 180ms ease;
         }
 
         .vybe-logo {
-          color: white;
+          color: var(--sidebar-active-text);
           font-size: 31px;
           font-weight: 950;
           letter-spacing: -1.5px;
@@ -111,11 +125,11 @@ export default function AppSidebar() {
         }
 
         .vybe-logo span {
-          color: #22d3ee;
+          color: var(--vybe-accent, #22d3ee);
         }
 
         .sidebar-section {
-          color: #77778e;
+          color: var(--sidebar-heading);
           font-size: 10px;
           font-weight: 800;
           letter-spacing: 2px;
@@ -134,38 +148,53 @@ export default function AppSidebar() {
           align-items: center;
           gap: 13px;
           border-radius: 11px;
-          color: #aaa8c1;
+          color: var(--sidebar-text);
           text-decoration: none;
           font-size: 14px;
           font-weight: 650;
           transition: background 160ms ease, color 160ms ease;
         }
 
+        .sidebar-link svg {
+          flex-shrink: 0;
+          color: var(--sidebar-muted);
+        }
+
         .sidebar-link:hover {
-          background: #211e35;
-          color: white;
+          background: var(--sidebar-hover);
+          color: var(--sidebar-hover-text);
+        }
+
+        .sidebar-link:hover svg {
+          color: var(--sidebar-hover-text);
         }
 
         .sidebar-link.active {
-          background: linear-gradient(100deg, #38265f, #202d49);
-          color: white;
-          box-shadow: inset 3px 0 #9b6dff;
+          background: var(--sidebar-active-bg);
+          color: var(--sidebar-active-text);
+          box-shadow: inset 3px 0 var(--vybe-accent, #9b6dff);
         }
 
-        .sidebar-link.active :global(svg) {
-          color: #22d3ee;
+        .sidebar-link.active svg {
+          color: var(--vybe-accent, #22d3ee);
         }
 
         .sidebar-link.disabled {
-          opacity: 0.45;
+          opacity: 0.7;
           cursor: default;
+        }
+
+        .sidebar-link.disabled:hover {
+          background: transparent;
+          color: var(--sidebar-text);
         }
 
         .sidebar-link small {
           margin-left: auto;
           font-size: 8px;
+          font-weight: 800;
           letter-spacing: 1px;
-          color: #22d3ee;
+          color: var(--vybe-accent, #22d3ee);
         }
 
         .account-heading {
@@ -181,11 +210,15 @@ export default function AppSidebar() {
           flex-direction: column;
           gap: 7px;
           padding: 18px;
-          border: 1px solid #393052;
+          border: 1px solid var(--sidebar-promo-border);
           border-radius: 14px;
-          background: linear-gradient(145deg, #211a3b, #111c2b);
-          color: white;
+          background: var(--sidebar-promo-bg);
+          color: var(--sidebar-active-text);
           font-size: 15px;
+        }
+
+        .sidebar-promo :global(svg) {
+          color: var(--cyan);
         }
 
         .sidebar-promo strong {
@@ -193,22 +226,54 @@ export default function AppSidebar() {
         }
 
         .sidebar-promo span {
-          color: #aaa8c1;
+          color: var(--sidebar-text);
         }
 
         .sidebar-promo small {
           margin-top: 8px;
-          color: #22d3ee;
+          color: var(--cyan);
           font-size: 9px;
+          font-weight: 800;
           letter-spacing: 1.5px;
         }
 
         .sidebar-version {
-          color: #65627b;
+          color: var(--sidebar-heading);
           font-size: 9px;
           letter-spacing: 1.5px;
           text-align: center;
           margin-top: 22px;
+        }
+
+        /* Light theme */
+        :global(html[data-resolved-theme="light"]) .vybe-sidebar {
+          --sidebar-bg: #ffffff;
+          --sidebar-text: #29283d;
+          --sidebar-muted: #55536e;
+          --sidebar-heading: #65627d;
+          --sidebar-border: #deddea;
+          --sidebar-hover: #eeeefa;
+          --sidebar-hover-text: #17162a;
+          --sidebar-active-bg: #ece7fa;
+          --sidebar-active-text: #292044;
+          --sidebar-promo-bg: linear-gradient(145deg, #f0ebff, #e9f5fa);
+          --sidebar-promo-border: #d8d0ed;
+        }
+
+        @media (prefers-color-scheme: light) {
+          :global(html[data-theme="system"]) .vybe-sidebar {
+            --sidebar-bg: #ffffff;
+            --sidebar-text: #29283d;
+            --sidebar-muted: #55536e;
+            --sidebar-heading: #65627d;
+            --sidebar-border: #deddea;
+            --sidebar-hover: #eeeefa;
+            --sidebar-hover-text: #17162a;
+            --sidebar-active-bg: #ece7fa;
+            --sidebar-active-text: #292044;
+            --sidebar-promo-bg: linear-gradient(145deg, #f0ebff, #e9f5fa);
+            --sidebar-promo-border: #d8d0ed;
+          }
         }
 
         @media (max-width: 700px) {
@@ -225,7 +290,7 @@ export default function AppSidebar() {
             height: 67px;
             padding: 6px 8px;
             border-right: none;
-            border-top: 1px solid #28253e;
+            border-top: 1px solid var(--sidebar-border);
             display: block;
           }
 
