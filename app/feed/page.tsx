@@ -119,10 +119,11 @@ export default async function FeedPage() {
     <main
       style={{
         minHeight: "100vh",
-        background: "#090A14",
-        color: "#F4F4FF",
+        background: "var(--background)",
+        color: "var(--text)",
         fontFamily: "Arial, sans-serif",
         padding: "25px 5%",
+        transition: "background 180ms ease, color 180ms ease",
       }}
     >
       <nav
@@ -133,32 +134,40 @@ export default async function FeedPage() {
           justifyContent: "space-between",
           alignItems: "center",
           paddingBottom: "22px",
-          borderBottom: "1px solid #25243B",
+          borderBottom: "1px solid var(--border)",
         }}
       >
         <Link
           href="/"
           style={{
-            color: "#FFFFFF",
+            color: "var(--text)",
             fontSize: "30px",
             fontWeight: 900,
             textDecoration: "none",
           }}
         >
-          VYBE<span style={{ color: "#22D3EE" }}>.</span>
+          VYBE<span style={{ color: "var(--cyan)" }}>.</span>
         </Link>
 
         <div style={{ display: "flex", gap: "22px", alignItems: "center" }}>
           <Link
             href="/dashboard"
-            style={{ color: "#B99BFF", textDecoration: "none" }}
+            style={{
+              color: "var(--purple)",
+              textDecoration: "none",
+              fontWeight: 600,
+            }}
           >
             Dashboard
           </Link>
 
           <Link
             href="/profile"
-            style={{ color: "#B99BFF", textDecoration: "none" }}
+            style={{
+              color: "var(--purple)",
+              textDecoration: "none",
+              fontWeight: 600,
+            }}
           >
             My profile
           </Link>
@@ -168,10 +177,10 @@ export default async function FeedPage() {
       <div style={{ maxWidth: "720px", margin: "40px auto" }}>
         <div style={{ marginBottom: "30px" }}>
           <h1 style={{ fontSize: "36px", marginBottom: "8px" }}>
-            Your Feed<span style={{ color: "#22D3EE" }}>.</span>
+            Your Feed<span style={{ color: "var(--cyan)" }}>.</span>
           </h1>
 
-          <p style={{ color: "#9996B5", margin: 0 }}>
+          <p style={{ color: "var(--muted)", margin: 0 }}>
             Your people. Your world.
           </p>
         </div>
