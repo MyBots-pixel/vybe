@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
 import { signOut } from "../actions/auth";
 import {
-  House,
   Newspaper,
   UserRound,
   Settings,
@@ -14,7 +13,6 @@ import {
   ArrowUpRight,
   Sparkles,
   LogOut,
-  Users,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -40,57 +38,54 @@ export default async function DashboardPage() {
     user.email?.split("@")[0] ||
     "there";
 
-  const navigation = [
+  const cards = [
     {
       title: "Your Feed",
       description: "See what's happening in your world.",
       href: "/feed",
       icon: Newspaper,
       color: "#22D3EE",
-      tag: "SOCIAL",
+      status: "AVAILABLE",
     },
     {
       title: "My Profile",
-      description: "Customise how people see you.",
+      description: "Customise your identity on VYBE.",
       href: "/profile",
       icon: UserRound,
       color: "#EC4899",
-      tag: "YOUR IDENTITY",
+      status: "AVAILABLE",
     },
     {
       title: "Settings",
-      description: "Make VYBE yours with customisation.",
+      description: "Personalise your VYBE experience.",
       href: "/settings",
       icon: Settings,
       color: "#8B5CF6",
-      tag: "PERSONALISE",
+      status: "AVAILABLE",
     },
     {
       title: "Explore",
-      description: "Discover new people and communities.",
-      href: "#",
+      description: "Discover people and communities.",
+      href: null,
       icon: Compass,
       color: "#10B981",
-      tag: "COMING SOON",
-      disabled: true,
+      status: "COMING SOON",
     },
     {
       title: "Messages",
       description: "Connect privately with your people.",
-      href: "#",
+      href: null,
       icon: MessageCircle,
       color: "#F59E0B",
-      tag: "COMING SOON",
-      disabled: true,
+      status: "COMING SOON",
     },
     {
       title: "Notifications",
       description: "Keep up with your latest activity.",
-      href: "#",
+      href: null,
       icon: Bell,
       color: "#F472B6",
-      tag: "COMING SOON",
-      disabled: true,
+      status: "COMING SOON",
     },
   ];
 
@@ -100,66 +95,47 @@ export default async function DashboardPage() {
         minHeight: "100vh",
         background: "#090A14",
         color: "#F4F4FF",
+        padding: "30px 5%",
         fontFamily: "Arial, sans-serif",
-        padding: "35px 5%",
       }}
     >
       <style>{`
-        .dashboard-grid {
+        .vybe-dashboard-grid {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 17px;
+          gap: 18px;
         }
 
-        .dashboard-card {
-          display: flex;
-          flex-direction: column;
+        .vybe-dashboard-card {
+          display: block;
+          padding: 24px;
           min-height: 185px;
-          padding: 22px;
-          border-radius: 17px;
           border: 1px solid #302B4C;
+          border-radius: 17px;
           background: #151629;
-          color: white;
+          color: #F4F4FF;
           text-decoration: none;
           transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
         }
 
-        .dashboard-card:not(.disabled):hover {
+        .vybe-dashboard-card:hover {
           transform: translateY(-4px);
           border-color: #8B5CF6;
           background: #1B1A34;
         }
 
-        .dashboard-card.disabled {
-          opacity: 0.48;
-          cursor: default;
+        .vybe-dashboard-disabled {
+          opacity: 0.5;
         }
 
-        .dashboard-card .card-icon {
-          width: 43px;
-          height: 43px;
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-bottom: 20px;
-        }
-
-        .dashboard-card .card-tag {
-          font-size: 9px;
-          font-weight: 800;
-          letter-spacing: 1.3px;
-          margin-bottom: 8px;
-        }
-
-        @media (max-width: 850px) {
-          .dashboard-grid {
+        @media (max-width: 800px) {
+          .vybe-dashboard-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
           }
         }
 
         @media (max-width: 520px) {
-          .dashboard-grid {
+          .vybe-dashboard-grid {
             grid-template-columns: 1fr;
           }
         }
@@ -172,30 +148,30 @@ export default async function DashboardPage() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          paddingBottom: "23px",
+          gap: "15px",
+          paddingBottom: "22px",
           borderBottom: "1px solid #25243B",
         }}
       >
         <Link
           href="/"
           style={{
-            color: "white",
-            fontSize: "31px",
-            fontWeight: 950,
-            letterSpacing: "-1px",
+            color: "#FFFFFF",
+            fontSize: "30px",
+            fontWeight: 900,
             textDecoration: "none",
           }}
         >
           VYBE<span style={{ color: "#22D3EE" }}>.</span>
         </Link>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "13px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <Link
             href="/profile"
             title="My profile"
             style={{
-              width: "40px",
-              height: "40px",
+              width: "42px",
+              height: "42px",
               borderRadius: "50%",
               background: profile?.avatar_url
                 ? `url("${profile.avatar_url}") center/cover`
@@ -218,14 +194,13 @@ export default async function DashboardPage() {
               style={{
                 display: "flex",
                 alignItems: "center",
-                gap: "8px",
+                gap: "7px",
                 padding: "10px 14px",
-                border: "1px solid #39304F",
+                border: "1px solid #493044",
                 borderRadius: "9px",
                 background: "#151629",
                 color: "#FF9BAF",
                 cursor: "pointer",
-                fontWeight: 700,
               }}
             >
               <LogOut size={15} />
@@ -240,173 +215,174 @@ export default async function DashboardPage() {
           style={{
             position: "relative",
             overflow: "hidden",
-            padding: "42px",
+            padding: "40px",
             borderRadius: "22px",
             border: "1px solid #49376B",
-            background: "linear-gradient(115deg, #21183D, #171B35 60%, #102A3B)",
-            marginBottom: "38px",
+            background:
+              "linear-gradient(115deg, #21183D, #171B35 60%, #102A3B)",
+            marginBottom: "40px",
           }}
         >
           <div
             style={{
-              position: "absolute",
-              width: "250px",
-              height: "250px",
-              borderRadius: "50%",
-              background: "#8B5CF6",
-              filter: "blur(100px)",
-              opacity: 0.18,
-              right: "5%",
-              top: "-100px",
+              color: "#22D3EE",
+              fontSize: "11px",
+              fontWeight: 800,
+              letterSpacing: "2px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
             }}
-          />
-
-          <div style={{ position: "relative" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "9px",
-                color: "#22D3EE",
-                fontSize: "11px",
-                fontWeight: 800,
-                letterSpacing: "2px",
-              }}
-            >
-              <Sparkles size={15} />
-              YOUR VYBE STARTS HERE
-            </div>
-
-            <h1
-              style={{
-                fontSize: "clamp(30px, 5vw, 46px)",
-                margin: "18px 0 10px",
-                letterSpacing: "-1.5px",
-              }}
-            >
-              Welcome back, {displayName}.
-            </h1>
-
-            <p
-              style={{
-                color: "#C0B9D8",
-                fontSize: "15px",
-                lineHeight: 1.7,
-                maxWidth: "550px",
-                margin: 0,
-              }}
-            >
-              Your people. Your world. Everything you need to connect,
-              share and make your VYBE yours is right here.
-            </p>
-
-            <Link
-              href="/feed"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "9px",
-                marginTop: "25px",
-                padding: "13px 20px",
-                borderRadius: "10px",
-                background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
-                color: "white",
-                textDecoration: "none",
-                fontWeight: 800,
-                fontSize: "13px",
-              }}
-            >
-              Open your feed <ArrowUpRight size={17} />
-            </Link>
+          >
+            <Sparkles size={15} />
+            YOUR VYBE STARTS HERE
           </div>
+
+          <h1
+            style={{
+              fontSize: "clamp(30px, 5vw, 45px)",
+              margin: "20px 0 12px",
+              letterSpacing: "-1px",
+            }}
+          >
+            Welcome back, {displayName}.
+          </h1>
+
+          <p
+            style={{
+              color: "#C0B9D8",
+              fontSize: "15px",
+              lineHeight: 1.7,
+              maxWidth: "550px",
+            }}
+          >
+            Your people. Your world. Your place to connect, share and
+            discover something new.
+          </p>
+
+          <Link
+            href="/feed"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "9px",
+              marginTop: "15px",
+              padding: "13px 20px",
+              borderRadius: "10px",
+              background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
+              color: "white",
+              textDecoration: "none",
+              fontWeight: 800,
+              fontSize: "13px",
+            }}
+          >
+            Open your feed <ArrowUpRight size={17} />
+          </Link>
         </section>
 
-        <div style={{ marginBottom: "20px" }}>
+        <section>
           <p
             style={{
               color: "#22D3EE",
               fontSize: "10px",
               fontWeight: 800,
               letterSpacing: "2px",
-              marginBottom: "8px",
             }}
           >
             YOUR SPACE
           </p>
 
-          <h2 style={{ fontSize: "25px", margin: 0 }}>
+          <h2 style={{ fontSize: "25px", marginBottom: "8px" }}>
             Where do you want to go?
           </h2>
 
-          <p style={{ color: "#9996B5", fontSize: "13px" }}>
-            Everything in VYBE, just one click away.
+          <p style={{ color: "#9996B5", fontSize: "13px", marginBottom: "22px" }}>
+            Everything you need, just one click away.
           </p>
-        </div>
 
-        <div className="dashboard-grid">
-          {navigation.map((item) => {
-            const Icon = item.icon;
+          <div className="vybe-dashboard-grid">
+            {cards.map((card) => {
+              const Icon = card.icon;
 
-            return (
-              <Link
-                key={item.title}
-                href={item.href}
-                onClick={
-                  item.disabled
-                    ? (event) => event.preventDefault()
-                    : undefined
-                }
-                className={`dashboard-card ${item.disabled ? "disabled" : ""}`}
-                aria-disabled={item.disabled || undefined}
-              >
+              const content = (
+                <>
+                  <div
+                    style={{
+                      width: "43px",
+                      height: "43px",
+                      borderRadius: "12px",
+                      background: `${card.color}18`,
+                      color: card.color,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    <Icon size={22} />
+                  </div>
+
+                  <p
+                    style={{
+                      color: card.color,
+                      fontSize: "9px",
+                      fontWeight: 800,
+                      letterSpacing: "1.3px",
+                    }}
+                  >
+                    {card.status}
+                  </p>
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: "10px",
+                    }}
+                  >
+                    <strong style={{ fontSize: "17px" }}>
+                      {card.title}
+                    </strong>
+
+                    {card.href && (
+                      <ArrowUpRight size={17} color="#77778E" />
+                    )}
+                  </div>
+
+                  <p
+                    style={{
+                      color: "#9996B5",
+                      fontSize: "12px",
+                      lineHeight: 1.6,
+                      marginBottom: 0,
+                    }}
+                  >
+                    {card.description}
+                  </p>
+                </>
+              );
+
+              return card.href ? (
+                <Link
+                  key={card.title}
+                  href={card.href}
+                  className="vybe-dashboard-card"
+                >
+                  {content}
+                </Link>
+              ) : (
                 <div
-                  className="card-icon"
-                  style={{
-                    background: `${item.color}18`,
-                    color: item.color,
-                  }}
+                  key={card.title}
+                  className="vybe-dashboard-card vybe-dashboard-disabled"
+                  aria-disabled="true"
                 >
-                  <Icon size={22} />
+                  {content}
                 </div>
-
-                <span
-                  className="card-tag"
-                  style={{ color: item.color }}
-                >
-                  {item.tag}
-                </span>
-
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    gap: "10px",
-                  }}
-                >
-                  <strong style={{ fontSize: "17px" }}>
-                    {item.title}
-                  </strong>
-
-                  {!item.disabled && (
-                    <ArrowUpRight size={17} color="#77778E" />
-                  )}
-                </div>
-
-                <p
-                  style={{
-                    color: "#9996B5",
-                    fontSize: "12px",
-                    lineHeight: 1.6,
-                    margin: "9px 0 0",
-                  }}
-                >
-                  {item.description}
-                </p>
-              </Link>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </section>
 
         <section
           style={{
@@ -416,14 +392,14 @@ export default async function DashboardPage() {
             border: "1px solid #302B4C",
             background: "#151629",
             display: "flex",
-            alignItems: "center",
             justifyContent: "space-between",
-            gap: "15px",
+            alignItems: "center",
             flexWrap: "wrap",
+            gap: "15px",
           }}
         >
           <div>
-            <div
+            <p
               style={{
                 color: "#22D3EE",
                 fontSize: "10px",
@@ -432,21 +408,13 @@ export default async function DashboardPage() {
               }}
             >
               YOUR ACCOUNT
-            </div>
+            </p>
 
-            <div style={{ fontWeight: 700, marginTop: "8px" }}>
-              {displayName}
-            </div>
+            <strong>{displayName}</strong>
 
-            <div
-              style={{
-                color: "#9996B5",
-                fontSize: "12px",
-                marginTop: "4px",
-              }}
-            >
+            <p style={{ color: "#9996B5", fontSize: "12px" }}>
               {user.email}
-            </div>
+            </p>
           </div>
 
           <Link
