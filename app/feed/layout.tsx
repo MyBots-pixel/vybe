@@ -11,8 +11,7 @@ export default function FeedLayout({
       style={{
         minHeight: "100vh",
         display: "flex",
-        background: "#090A14",
-      }}
+background: "var(--background)",      }}
     >
       <AppSidebar />
 
