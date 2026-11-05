@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
@@ -30,65 +31,103 @@ export default async function ProfilePage({
     padding: "15px",
     marginTop: "9px",
     borderRadius: "10px",
-    border: "1px solid #39304F",
-    background: "#090A14",
-    color: "#FFFFFF",
+    border: "1px solid var(--border)",
+    background: "var(--input-background)",
+    color: "var(--text)",
     boxSizing: "border-box" as const,
     fontSize: "15px",
+    fontFamily: "inherit",
+  };
+
+  const sectionStyle = {
+    maxWidth: "750px",
+    margin: "0 auto 35px",
+    background: "var(--card-background)",
+    border: "1px solid var(--border)",
+    borderRadius: "18px",
+    padding: "30px",
   };
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        background: "#090A14",
-        color: "#F4F4FF",
+        background: "var(--background)",
+        color: "var(--text)",
         padding: "35px 7%",
-        fontFamily: "Arial, sans-serif",
+        fontFamily: "inherit",
       }}
     >
-      <nav
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          borderBottom: "1px solid #25243B",
-          paddingBottom: "25px",
-        }}
-      >
+      <style>{`
+        .vybe-profile-muted {
+          color: var(--muted);
+        }
+
+        .vybe-profile-input::placeholder {
+          color: var(--muted);
+          opacity: 0.8;
+        }
+
+        .vybe-profile-input:focus {
+          outline: 2px solid var(--purple);
+          outline-offset: 2px;
+        }
+
+        .vybe-profile-nav {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          border-bottom: 1px solid var(--border);
+          padding-bottom: 25px;
+          gap: 15px;
+        }
+
+        .vybe-profile-card {
+          max-width: 750px;
+          margin: 55px auto;
+          background: var(--card-background);
+          border: 1px solid var(--border);
+          border-radius: 22px;
+          overflow: hidden;
+        }
+
+        @media (max-width: 520px) {
+          .vybe-profile-card {
+            margin: 35px auto;
+          }
+
+          .vybe-profile-section {
+            padding: 22px !important;
+          }
+        }
+      `}</style>
+
+      <nav className="vybe-profile-nav">
         <Link
           href="/"
           style={{
-            color: "#FFFFFF",
+            color: "var(--text)",
             fontSize: "30px",
             fontWeight: 900,
             textDecoration: "none",
           }}
         >
-          VYBE<span style={{ color: "#22D3EE" }}>.</span>
+          VYBE<span style={{ color: "var(--cyan)" }}>.</span>
         </Link>
 
         <Link
           href="/dashboard"
           style={{
-            color: "#B99BFF",
+            color: "var(--purple)",
             textDecoration: "none",
+            fontWeight: 600,
           }}
         >
           Dashboard →
         </Link>
       </nav>
 
-      <section
-        style={{
-          maxWidth: "750px",
-          margin: "55px auto",
-          background: "#151629",
-          border: "1px solid #302B4C",
-          borderRadius: "22px",
-          overflow: "hidden",
-        }}
-      >
+      <section className="vybe-profile-card">
         <div
           style={{
             height: "150px",
@@ -105,15 +144,16 @@ export default async function ProfilePage({
               height: "100px",
               marginTop: "-50px",
               borderRadius: "50%",
-              border: "5px solid #151629",
+              border: "5px solid var(--card-background)",
               background: profile?.avatar_url
                 ? `url("${profile.avatar_url}") center/cover`
-                : "linear-gradient(135deg, #8B5CF6, #22D3EE)",
+                : "linear-gradient(135deg, var(--purple), var(--cyan))",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
               fontSize: "36px",
               fontWeight: 900,
+              color: "#FFFFFF",
             }}
           >
             {!profile?.avatar_url &&
@@ -126,31 +166,22 @@ export default async function ProfilePage({
             {profile?.display_name || "Your profile"}
           </h1>
 
-          <p style={{ color: "#22D3EE" }}>
+          <p style={{ color: "var(--cyan)" }}>
             {profile?.username
               ? `@${profile.username}`
               : "Choose your username"}
           </p>
 
-          <p style={{ color: "#BDB9D3" }}>
+          <p className="vybe-profile-muted">
             {profile?.bio || "You haven't added a bio yet."}
           </p>
         </div>
       </section>
 
-      <section
-        style={{
-          maxWidth: "750px",
-          margin: "0 auto 35px",
-          background: "#151629",
-          border: "1px solid #302B4C",
-          borderRadius: "18px",
-          padding: "30px",
-        }}
-      >
+      <section className="vybe-profile-section" style={sectionStyle}>
         <h2 style={{ fontSize: "23px" }}>VYBE Image Studio</h2>
 
-        <p style={{ color: "#9996B5", fontSize: "13px" }}>
+        <p className="vybe-profile-muted" style={{ fontSize: "13px" }}>
           Edit, crop and position your profile pictures and banners before
           uploading them.
         </p>
@@ -158,23 +189,14 @@ export default async function ProfilePage({
         <ImageEditor />
       </section>
 
-      <section
-        style={{
-          maxWidth: "750px",
-          margin: "0 auto",
-          background: "#151629",
-          border: "1px solid #302B4C",
-          borderRadius: "18px",
-          padding: "30px",
-        }}
-      >
+      <section className="vybe-profile-section" style={sectionStyle}>
         <h2 style={{ fontSize: "23px" }}>Edit your details</h2>
 
         {params.error && (
           <p
             style={{
               background: "#451D2B",
-              color: "#FF9BAF",
+              color: "#FFB6C5",
               padding: "13px",
               borderRadius: "9px",
             }}
@@ -200,6 +222,7 @@ export default async function ProfilePage({
           <label>
             Username
             <input
+              className="vybe-profile-input"
               name="username"
               defaultValue={profile?.username || ""}
               placeholder="Your username"
@@ -214,6 +237,7 @@ export default async function ProfilePage({
           <label style={{ display: "block", marginTop: "22px" }}>
             Display name
             <input
+              className="vybe-profile-input"
               name="display_name"
               defaultValue={profile?.display_name || ""}
               placeholder="Your name"
@@ -226,6 +250,7 @@ export default async function ProfilePage({
           <label style={{ display: "block", marginTop: "22px" }}>
             Bio
             <textarea
+              className="vybe-profile-input"
               name="bio"
               defaultValue={profile?.bio || ""}
               placeholder="Tell everyone about yourself..."
@@ -243,7 +268,7 @@ export default async function ProfilePage({
               padding: "15px",
               border: "none",
               borderRadius: "10px",
-              background: "linear-gradient(90deg, #8B5CF6, #22D3EE)",
+              background: "linear-gradient(90deg, var(--purple), var(--cyan))",
               color: "#FFFFFF",
               fontWeight: 800,
               cursor: "pointer",
@@ -257,11 +282,11 @@ export default async function ProfilePage({
           style={{
             marginTop: "25px",
             padding: "18px",
-            background: "#090A14",
+            background: "var(--input-background)",
             borderRadius: "10px",
           }}
         >
-          <p style={{ color: "#9996B5", fontSize: "12px" }}>
+          <p className="vybe-profile-muted" style={{ fontSize: "12px" }}>
             ACCOUNT EMAIL
           </p>
           {user.email}
@@ -275,10 +300,10 @@ export default async function ProfilePage({
         <button
           type="submit"
           style={{
-            background: "#151629",
-            border: "1px solid #39304F",
+            background: "var(--card-background)",
+            border: "1px solid var(--border)",
             borderRadius: "10px",
-            color: "#FFFFFF",
+            color: "var(--text)",
             padding: "13px 22px",
             cursor: "pointer",
           }}
