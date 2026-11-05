@@ -1,43 +1,72 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
+/* =========================================
+   VYBE GLOBAL THEME
+========================================= */
+
 :root {
   --background: #090914;
   --surface: #151529;
-  --purple: var(--vybe-accent, #9b6dff);
+  --surface-secondary: #1b1b32;
+  --purple: var(--vybe-accent, #8b5cf6);
   --cyan: #22d3ee;
-  --pink: #ed6cbb;
+  --pink: #ec4899;
   --text: #f5f3ff;
   --muted: #a09db8;
-  --border: #ffffff12;
+  --border: #ffffff15;
   --card-background: #151529;
-  --input-background: #090914;
-  --corner-radius: 17px;
+  --input-background: #101020;
+  --corner-radius: 16px;
+
   color-scheme: dark;
 }
 
 :root[data-resolved-theme="light"] {
-  --background: #f3f4fa;
+  --background: #f5f6fc;
   --surface: #ffffff;
-  --text: #17172b;
-  --muted: #686880;
-  --border: #dedeee;
+  --surface-secondary: #eef0f8;
+  --text: #17172a;
+  --muted: #686980;
+  --border: #17172a18;
   --card-background: #ffffff;
-  --input-background: #f1f1f8;
+  --input-background: #f0f1f7;
+
   color-scheme: light;
 }
 
+/* Automatic device theme detection */
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] {
+    --background: #f5f6fc;
+    --surface: #ffffff;
+    --surface-secondary: #eef0f8;
+    --text: #17172a;
+    --muted: #686980;
+    --border: #17172a18;
+    --card-background: #ffffff;
+    --input-background: #f0f1f7;
+
+    color-scheme: light;
+  }
+}
+
+/* Rounded corners */
 :root[data-border-radius="sharp"] {
-  --corner-radius: 5px;
+  --corner-radius: 4px;
 }
 
 :root[data-border-radius="rounded"] {
-  --corner-radius: 15px;
+  --corner-radius: 12px;
 }
 
 :root[data-border-radius="round"] {
-  --corner-radius: 25px;
+  --corner-radius: 22px;
 }
+
+/* =========================================
+   GLOBAL RESET
+========================================= */
 
 * {
   box-sizing: border-box;
@@ -47,8 +76,6 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--background);
-  color-scheme: inherit;
 }
 
 body {
@@ -56,7 +83,7 @@ body {
   color: var(--text);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
-  transition: background 180ms ease, color 180ms ease;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 
 a {
@@ -66,14 +93,72 @@ a {
 
 button,
 input,
-select,
-textarea {
+textarea,
+select {
   font: inherit;
 }
 
 button {
-  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
 }
+
+/* Font size settings */
+:root[data-font-size="small"] {
+  font-size: 14px;
+}
+
+:root[data-font-size="medium"] {
+  font-size: 16px;
+}
+
+:root[data-font-size="large"] {
+  font-size: 18px;
+}
+
+/* Font family settings */
+:root[data-font-family="default"] body {
+  font-family: 'Inter', sans-serif;
+}
+
+:root[data-font-family="modern"] body {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+:root[data-font-family="classic"] body {
+  font-family: Georgia, serif;
+}
+
+/* Compact layout */
+:root[data-compact="true"] {
+  --corner-radius: 9px;
+}
+
+/* Content width */
+:root[data-content-width="compact"] {
+  --vybe-content-width: 1100px;
+}
+
+:root[data-content-width="comfortable"] {
+  --vybe-content-width: 1350px;
+}
+
+:root[data-content-width="wide"] {
+  --vybe-content-width: 1600px;
+}
+
+/* Reduced motion */
+:root[data-reduced-motion="true"] *,
+:root[data-reduced-motion="true"] *::before,
+:root[data-reduced-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* =========================================
+   NAVIGATION
+========================================= */
 
 .navbar {
   height: 82px;
@@ -116,11 +201,11 @@ button {
   justify-content: center;
   gap: 10px;
   background: linear-gradient(110deg, var(--purple), #b05cf6);
+  color: white;
   padding: 13px 21px;
   border-radius: var(--corner-radius);
   font-size: 14px;
   font-weight: 700;
-  color: white;
   box-shadow: 0 0 30px #965dff35;
   transition: 0.25s;
 }
@@ -130,6 +215,10 @@ button {
   transform: translateY(-3px);
   box-shadow: 0 0 35px #965dff75;
 }
+
+/* =========================================
+   HOMEPAGE HERO
+========================================= */
 
 .hero {
   min-height: 660px;
@@ -170,8 +259,8 @@ button {
 }
 
 .eyebrow {
-  border: 1px solid color-mix(in srgb, var(--purple) 25%, transparent);
-  background: color-mix(in srgb, var(--purple) 8%, transparent);
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--purple) 10%, transparent);
   padding: 11px 15px;
   border-radius: 30px;
   margin-bottom: 30px;
@@ -188,7 +277,7 @@ button {
 .hero h1 span,
 .section-heading h2 span,
 .join-section h2 span {
-  background: linear-gradient(100deg, var(--purple), #43d9ed);
+  background: linear-gradient(100deg, var(--purple), var(--cyan));
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -220,7 +309,7 @@ button {
 
 .secondary-button:hover {
   border-color: var(--purple);
-  background: color-mix(in srgb, var(--purple) 8%, transparent);
+  background: color-mix(in srgb, var(--purple) 10%, transparent);
 }
 
 .hero-note {
@@ -240,6 +329,10 @@ button {
   box-shadow: 0 0 12px #42e5a0;
 }
 
+/* =========================================
+   HOMEPAGE VISUAL
+========================================= */
+
 .hero-visual {
   height: 440px;
   position: relative;
@@ -250,7 +343,7 @@ button {
 
 .orbit {
   position: absolute;
-  border: 1px solid #a47aff35;
+  border: 1px solid color-mix(in srgb, var(--purple) 35%, transparent);
   border-radius: 50%;
   animation: rotate 22s linear infinite;
 }
@@ -305,12 +398,12 @@ button {
   align-items: center;
   gap: 10px;
   padding: 14px 17px;
-  border: 1px solid #ffffff1e;
+  border: 1px solid var(--border);
   border-radius: var(--corner-radius);
-  background: #17162af0;
-  color: white;
+  background: var(--card-background);
+  color: var(--text);
   font-size: 12px;
-  box-shadow: 0 10px 35px #0008;
+  box-shadow: 0 10px 35px #0003;
   backdrop-filter: blur(15px);
 }
 
@@ -332,6 +425,10 @@ button {
   bottom: 20px;
   right: 5px;
 }
+
+/* =========================================
+   FEATURES
+========================================= */
 
 .features {
   padding: 95px 9%;
@@ -375,7 +472,7 @@ button {
 
 .feature-card:hover {
   transform: translateY(-6px);
-  border-color: var(--purple);
+  border-color: color-mix(in srgb, var(--purple) 65%, transparent);
   box-shadow: 0 15px 40px #0002;
 }
 
@@ -385,12 +482,12 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--corner-radius);
+  border-radius: 13px;
   margin-bottom: 23px;
 }
 
 .purple {
-  background: color-mix(in srgb, var(--purple) 12%, transparent);
+  background: color-mix(in srgb, var(--purple) 13%, transparent);
   color: var(--purple);
 }
 
@@ -400,7 +497,7 @@ button {
 }
 
 .pink {
-  background: #ed6cbb17;
+  background: #ec489917;
   color: var(--pink);
 }
 
@@ -416,6 +513,10 @@ button {
   line-height: 1.8;
 }
 
+/* =========================================
+   JOIN SECTION AND FOOTER
+========================================= */
+
 .join-section {
   text-align: center;
   padding: 110px 20px;
@@ -427,7 +528,7 @@ button {
   position: absolute;
   width: 450px;
   height: 250px;
-  background: #884bff25;
+  background: color-mix(in srgb, var(--purple) 15%, transparent);
   filter: blur(90px);
   left: 50%;
   transform: translateX(-50%);
@@ -459,81 +560,9 @@ footer > span {
   font-size: 12px;
 }
 
-/* Global theme support */
-
-:root[data-resolved-theme="light"] .navbar {
-  background: #ffffffed;
-}
-
-:root[data-resolved-theme="light"] .floating-card {
-  background: #ffffffed;
-  color: #17172b;
-  border-color: #dedeee;
-  box-shadow: 0 10px 35px #00000012;
-}
-
-:root[data-resolved-theme="light"] .features {
-  background: #e9eaf3;
-}
-
-:root[data-resolved-theme="light"] .feature-card {
-  background: #ffffff;
-  border-color: #dedeee;
-}
-
-:root[data-resolved-theme="light"] .secondary-button {
-  border-color: #c9c9dc;
-}
-
-:root[data-resolved-theme="light"] .secondary-button:hover {
-  background: color-mix(in srgb, var(--purple) 8%, white);
-}
-
-:root[data-font-size="small"] body {
-  font-size: 13px;
-}
-
-:root[data-font-size="large"] body {
-  font-size: 17px;
-}
-
-:root[data-font-family="modern"] body {
-  font-family: Arial, sans-serif;
-}
-
-:root[data-font-family="classic"] body {
-  font-family: Georgia, serif;
-}
-
-:root[data-compact="true"] .features {
-  padding-top: 65px;
-  padding-bottom: 65px;
-}
-
-:root[data-compact="true"] .feature-card {
-  padding: 20px;
-}
-
-:root[data-content-width="wide"] .hero,
-:root[data-content-width="wide"] .features {
-  padding-left: 5%;
-  padding-right: 5%;
-}
-
-:root[data-content-width="compact"] .hero,
-:root[data-content-width="compact"] .features {
-  padding-left: 13%;
-  padding-right: 13%;
-}
-
-:root[data-reduced-motion="true"] *,
-:root[data-reduced-motion="true"] *::before,
-:root[data-reduced-motion="true"] *::after {
-  animation-duration: 0.01ms !important;
-  animation-iteration-count: 1 !important;
-  scroll-behavior: auto !important;
-  transition-duration: 0.01ms !important;
-}
+/* =========================================
+   ANIMATIONS
+========================================= */
 
 @keyframes rotate {
   to {
@@ -545,10 +574,45 @@ footer > span {
   0%, 100% {
     transform: translateY(0) rotate(-10deg);
   }
+
   50% {
     transform: translateY(-14px) rotate(-5deg);
   }
 }
+
+/* =========================================
+   LIGHT THEME HOMEPAGE ADJUSTMENTS
+========================================= */
+
+:root[data-resolved-theme="light"] .navbar {
+  background: #ffffffed;
+}
+
+:root[data-resolved-theme="light"] .floating-card {
+  box-shadow: 0 10px 35px #17172a12;
+}
+
+:root[data-resolved-theme="light"] .secondary-button {
+  border-color: #17172a25;
+}
+
+@media (prefers-color-scheme: light) {
+  :root[data-theme="system"] .navbar {
+    background: #ffffffed;
+  }
+
+  :root[data-theme="system"] .floating-card {
+    box-shadow: 0 10px 35px #17172a12;
+  }
+
+  :root[data-theme="system"] .secondary-button {
+    border-color: #17172a25;
+  }
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+========================================= */
 
 @media (max-width: 850px) {
   .hero {
@@ -662,6 +726,7 @@ footer > span {
   }
 }
 
+/* Respect device reduced-motion preference */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
