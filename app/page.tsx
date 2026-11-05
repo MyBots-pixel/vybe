@@ -31,7 +31,7 @@ export default function Home() {
           <Link
             href="/login"
             style={{
-              color: "#F4F4FF",
+              color: "var(--text)",
               textDecoration: "none",
               fontSize: "13px",
               fontWeight: 700,
